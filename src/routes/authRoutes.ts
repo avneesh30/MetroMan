@@ -3,9 +3,9 @@ import { AuthController } from '../controllers/authController';
 import { Knex } from 'knex';
 import { authenticateToken } from '../middleware/authMiddleware';
 
-export function createAuthRouter(db: Knex) {
+export function createAuthRouter() {
     const router = express.Router();
-    const authController = new AuthController(db);
+    const authController = new AuthController();
 
     /**
      * @swagger

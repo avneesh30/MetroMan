@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { adminDB } from '../db';
 
 /**
  * @swagger
@@ -154,33 +155,33 @@ export class User implements UserAttributes {
         this.updated_at = attributes.updated_at;
     }
 
-    static async findById(db: Knex, id: number): Promise<User | undefined> {
-        const user = await db<UserAttributes>('users').where({ id }).first();
+    static async findById(id: number): Promise<User | undefined> {
+        const user = await adminDB<UserAttributes>('users').where({ id }).first();
         return user ? new User(user) : undefined;
     }
 
-    static async findByEmail(db: Knex, email: string): Promise<User | undefined> {
-        const user = await db<UserAttributes>('users').where({ email }).first();
+    static async findByEmail(email: string): Promise<User | undefined> {
+        const user = await adminDB<UserAttributes>('users').where({ email }).first();
         return user ? new User(user) : undefined;
     }
 
-    static async create(db: Knex, attributes: Omit<UserAttributes, 'id' | 'created_at' | 'updated_at'>): Promise<User> {
-        const [id] = await db<UserAttributes>('users').insert(attributes);
-        const user = await User.findById(db, id);
+    static async create(attributes: Omit<UserAttributes, 'id' | 'created_at' | 'updated_at'>): Promise<User> {
+        const [id] = await adminDB<UserAttributes>('users').insert(attributes);
+        const user = await User.findById(id);
         if (!user) {
             throw new Error('Failed to create user');
         }
         return user;
     }
 
-    async update(db: Knex, attributes: Partial<UserAttributes>): Promise<User> {
-        await db<UserAttributes>('users').where({ id: this.id }).update(attributes);
+    async update(attributes: Partial<UserAttributes>): Promise<User> {
+        await adminDB<UserAttributes>('users').where({ id: this.id }).update(attributes);
         Object.assign(this, attributes);
         return this;
     }
 
-    async delete(db: Knex): Promise<void> {
-        await db<UserAttributes>('users').where({ id: this.id }).del();
+    async delete(): Promise<void> {
+        await adminDB<UserAttributes>('users').where({ id: this.id }).del();
     }
 
     toJSON(): Omit<UserAttributes, 'auth_token'> {

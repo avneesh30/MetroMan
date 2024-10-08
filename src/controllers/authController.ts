@@ -1,14 +1,12 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Knex } from 'knex';
-import { User, UserAttributes } from '../models/userTable';
-import { v4 as uuidv4 } from 'uuid';
+import { User } from '../models/userTable';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
 
 export class AuthController {
-    constructor(private db: Knex) { }
+    constructor() { }
 
     async register(req: Request, res: Response) {
         const { display_name, email, password, identity } = req.body;
@@ -19,7 +17,7 @@ export class AuthController {
 
         try {
             // Check if user already exists
-            const existingUser = await User.findByEmail(this.db, email);
+            const existingUser = await User.findByEmail(email);
             if (existingUser) {
                 return res.status(400).json({ message: 'User already exists' });
             }
@@ -29,7 +27,7 @@ export class AuthController {
 
 
             // Create new user
-            const newUser = await User.create(this.db, {
+            const newUser = await User.create({
                 display_name,
                 email,
                 identity,
@@ -81,7 +79,7 @@ export class AuthController {
 
         try {
             // Find user
-            const user = await User.findByEmail(this.db, email);
+            const user = await User.findByEmail(email);
             if (!user) {
                 return res.status(400).json({ message: 'Invalid credentials' });
             }
@@ -109,7 +107,7 @@ export class AuthController {
 
     async getProfile(req: AuthenticatedRequest, res: Response) {
         try {
-            const user = await User.findById(this.db, req.user!.id);
+            const user = await User.findById(req.user!.id);
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }

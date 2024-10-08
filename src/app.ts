@@ -1,8 +1,6 @@
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
-import knex from "knex";
-import knexConfig from "../knexfile";
 import { createAuthRouter } from "./routes/authRoutes";
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
@@ -14,14 +12,12 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const db = knex(knexConfig.development);
-
 
 const isProduction = false;
-const BASE_URL = isProduction ? 'https://softwarera.com' : `http://localhost:${process.env.PORT || 3000}`;
+const BASE_URL = isProduction ? 'https://MetroMan.com' : `http://localhost:${process.env.PORT || 3000}`;
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://softwarera.com'],
+    origin: ['http://localhost:3000', 'https://MetroMan.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -42,7 +38,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 // Auth routes
-app.use('/api/auth', createAuthRouter(db));
+app.use('/api/auth', createAuthRouter());
 
 // Protect all routes after this middleware
 app.use(authenticateToken);
@@ -59,4 +55,4 @@ server.listen(PORT, () => {
     console.log(`Swagger UI available at ${BASE_URL}/api-docs`);
 });
 
-export { app, db };
+export { app };

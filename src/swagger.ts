@@ -1,7 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
 const isProduction = true;
-const BASE_URL = isProduction ? 'https://softwarera.com' : `http://localhost:${process.env.PORT || 3000}`;
+const BASE_URL = isProduction ? 'https://MetroMan.com' : `http://localhost:${process.env.PORT || 3000}`;
 
 
 const options: swaggerJsdoc.Options = {
